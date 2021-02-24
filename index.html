@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <p id="log"></p>
+    ip: <input type="text" id="ip" value="192.168.">
+    <br>
+    message: <input type="text" id="msg" value="JBK">
+    <br>
+    <input type="button" id="bt" value="TEST">
+    <script>
+      const access = event => {
+        let log = document.querySelector('#log');
+        log.innerHTML = '1';
+        let [ip, msg] = ['#ip', '#msg'].map(id => document.querySelector(id).value);
+        log.innerHTML = '2';
+        let ws = new WebSocket(`ws://${ip}:7547`);
+        setInterval(() => {
+          log.innerHTML = 'readystate: ' + ws.readyState;
+        }, 1000);
+
+        // 연결이 수립되면 서버에 메시지를 전송한다
+        ws.onopen = (event) => {
+          log.innerHTML = '4';
+          ws.send("this is test: " + msg);
+          log.innerHTML = '5';
+        };
+
+        ws.onerror = event => {
+          log.innerHTML = event
+        }
+      }
+      document.querySelector('#bt').addEventListener('click', access);
+    </script>
+  </body>
+</html>
