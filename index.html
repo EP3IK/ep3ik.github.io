@@ -30,30 +30,10 @@
       const codeReader = new ZXing.BrowserQRCodeReader()
       console.log('ZXing code reader initialized')
 
-      // reset button
-      // document.querySelector('#resetButton').addEventListener('click', () => {
-      //   codeReader.reset()
-      //   document.querySelector('#result').textContent = '';
-      //   console.log('Reset.')
-      // })
-
       let videoInputDevices = await codeReader.getVideoInputDevices();
       let selectedDeviceId = videoInputDevices[0].deviceId;
 
-      // const sourceSelect = document.querySelector('#sourceSelect')
-      // sourceSelect.append(...videoInputDevices.map((element) => {
-      //   const sourceOption = document.createElement('option');
-      //   sourceOption.text = element.label;
-      //   sourceOption.value = element.deviceId;
-      //   return sourceOption;
-      // }));
-      // sourceSelect.addEventListener('change', () => {
-      //   selectedDeviceId = sourceSelect.value;
-      // });
-
       if (videoInputDevices.length >= 1) {
-        // const sourceSelectPanel = document.querySelector('#sourceSelectPanel');
-        // sourceSelectPanel.style.display = 'block';
         await decodeOnce(codeReader, selectedDeviceId);
       }
     })
