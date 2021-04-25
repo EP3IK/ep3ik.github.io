@@ -19,7 +19,7 @@
       reader.addEventListener("load", async () => {
         img.src = reader.result;
         let result = await codeReader.decodeFromImage(img);
-        alert(result.url)
+        alert(result.text)
       });
       if (file) reader.readAsDataURL(file);
     };
