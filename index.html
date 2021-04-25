@@ -3,41 +3,26 @@
 
 <body>
 
-  <!-- <div>
-    <a class="button" id="resetButton">Reset</a>
-  </div> -->
-
   <div>
     <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
   </div>
-
-  <!-- <div id="sourceSelectPanel" style="display:none">
-    <label for="sourceSelect">Change video source:</label>
-    <select id="sourceSelect" style="max-width:400px">
-    </select>
-  </div> -->
-
-  <!-- <div style="display: table">
-    <label for="decoding-style"> Decoding Style:</label>
-    <select id="decoding-style" size="1">
-      <option value="once">Decode once</option>
-      <option value="continuously">Decode continuously</option>
-    </select>
-  </div> -->
 
   <label>Result:</label>
   <pre><code id="result"></code></pre>
 
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
   <script type="text/javascript">
-    const decodeOnce = (codeReader, selectedDeviceId) => {
-      codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
-        console.log(result)
-        document.querySelector('#result').textContent = result.text
-      }).catch((err) => {
-        console.error(err)
-        document.querySelector('#result').textContent = err
-      })
+    const decodeOnce = async (codeReader, selectedDeviceId) => {
+      let result = codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video');
+      console.log(result)
+      document.querySelector('#result').textContent = result.text
+      // codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
+      //   console.log(result)
+      //   document.querySelector('#result').textContent = result.text
+      // }).catch((err) => {
+      //   console.error(err)
+      //   document.querySelector('#result').textContent = err
+      // })
     }
 
     window.addEventListener('load', async () => {
@@ -69,7 +54,7 @@
       if (videoInputDevices.length >= 1) {
         // const sourceSelectPanel = document.querySelector('#sourceSelectPanel');
         // sourceSelectPanel.style.display = 'block';
-        decodeOnce(codeReader, selectedDeviceId);
+        await decodeOnce(codeReader, selectedDeviceId);
       }
     })
   </script>
