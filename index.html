@@ -18,10 +18,14 @@
       let reader = new FileReader();
       reader.addEventListener("load", async () => {
         img.src = reader.result;
-        let result = await codeReader.decodeFromImage(img);
-        alert(result.text)
+        codeReader.decodeFromImage(img)
+          .then(result => alert(result.text))
+          .catch(err => alert(err));
       });
-      if (file) reader.readAsDataURL(file);
+      if (file) {
+        alert('find file')
+        reader.readAsDataURL(file);
+      }
     };
   </script>
 
