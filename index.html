@@ -1,89 +1,76 @@
 <!doctype html>
 <html>
+
 <body>
 
-      <div>
-        <a class="button" id="startButton">Start</a>
-        <a class="button" id="resetButton">Reset</a>
-      </div>
+  <div>
+    <a class="button" id="resetButton">Reset</a>
+  </div>
 
-      <div>
-        <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
-      </div>
+  <div>
+    <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
+  </div>
 
-      <div id="sourceSelectPanel" style="display:none">
-        <label for="sourceSelect">Change video source:</label>
-        <select id="sourceSelect" style="max-width:400px">
-        </select>
-      </div>
+  <div id="sourceSelectPanel" style="display:none">
+    <label for="sourceSelect">Change video source:</label>
+    <select id="sourceSelect" style="max-width:400px">
+    </select>
+  </div>
 
-      <div style="display: table">
-        <label for="decoding-style"> Decoding Style:</label>
-        <select id="decoding-style" size="1">
-          <option value="once">Decode once</option>
-          <option value="continuously">Decode continuously</option>
-        </select>
-      </div>
+  <div style="display: table">
+    <label for="decoding-style"> Decoding Style:</label>
+    <select id="decoding-style" size="1">
+      <option value="once">Decode once</option>
+      <option value="continuously">Decode continuously</option>
+    </select>
+  </div>
 
-      <label>Result:</label>
-      <pre><code id="result"></code></pre>
+  <label>Result:</label>
+  <pre><code id="result"></code></pre>
 
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
   <script type="text/javascript">
     function decodeOnce(codeReader, selectedDeviceId) {
       codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
         console.log(result)
-        document.getElementById('result').textContent = result.text
+        document.querySelector('#result').textContent = result.text
       }).catch((err) => {
         console.error(err)
-        document.getElementById('result').textContent = err
+        document.querySelector('#result').textContent = err
       })
     }
 
     window.addEventListener('load', async () => {
-      let selectedDeviceId;
+      // init
       const codeReader = new ZXing.BrowserQRCodeReader()
       console.log('ZXing code reader initialized')
 
-      let videoInputDevices = await codeReader.getVideoInputDevices();
-
-      const sourceSelect = document.getElementById('sourceSelect')
-      selectedDeviceId = videoInputDevices[0].deviceId
-      if (videoInputDevices.length >= 1) {
-        videoInputDevices.forEach((element) => {
-          const sourceOption = document.createElement('option')
-          sourceOption.text = element.label
-          sourceOption.value = element.deviceId
-          sourceSelect.appendChild(sourceOption)
-        })
-
-        sourceSelect.onchange = () => {
-          selectedDeviceId = sourceSelect.value;
-        };
-
-        const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-        sourceSelectPanel.style.display = 'block'
-      }
-
-          // document.getElementById('startButton').addEventListener('click', () => {
-
-          //   const decodingStyle = document.getElementById('decoding-style').value;
-
-          //   if (decodingStyle == "once") {
-          //     decodeOnce(codeReader, selectedDeviceId);
-          //   } else {
-          //     decodeContinuously(codeReader, selectedDeviceId);
-          //   }
-
-          //   console.log(`Started decode from camera with id ${selectedDeviceId}`)
-          // })
-
-      document.getElementById('resetButton').addEventListener('click', () => {
+      // reset button
+      document.querySelector('#resetButton').addEventListener('click', () => {
         codeReader.reset()
-        document.getElementById('result').textContent = '';
+        document.querySelector('#result').textContent = '';
         console.log('Reset.')
       })
-      decodeOnce(codeReader, selectedDeviceId);
+
+      let videoInputDevices = await codeReader.getVideoInputDevices();
+      let selectedDeviceId = videoInputDevices[0].deviceId;
+
+      const sourceSelect = document.querySelector('#sourceSelect')
+      sourceSelect.append(...videoInputDevices.map((element) => {
+        const sourceOption = document.createElement('option');
+        sourceOption.text = element.label;
+        sourceOption.value = element.deviceId;
+        return sourceOption;
+      }));
+      sourceSelect.addEventListener('change', () => {
+        selectedDeviceId = sourceSelect.value;
+      });
+
+      if (videoInputDevices.length >= 1) {
+        const sourceSelectPanel = document.querySelector('#sourceSelectPanel');
+        sourceSelectPanel.style.display = 'block';
+        decodeOnce(codeReader, selectedDeviceId);
+      }
     })
   </script>
 
