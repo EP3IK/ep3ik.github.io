@@ -1,35 +1,23 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <p id="log"></p>
-    ip: <input type="text" id="ip" value="192.168.">
-    <br>
-    message: <input type="text" id="msg" value="JBK">
-    <br>
-    <input type="button" id="bt" value="TEST">
+    <input type="file" onchange="previewFile()"><br>
+    <img src="" height="200" alt="이미지 미리보기...">
     <script>
-      const access = event => {
-        let log = document.querySelector('#log');
-        log.innerHTML = '1';
-        let [ip, msg] = ['#ip', '#msg'].map(id => document.querySelector(id).value);
-        log.innerHTML = '2';
-        let ws = new WebSocket(`ws://${ip}:7547`);
-        setInterval(() => {
-          log.innerHTML = 'readystate: ' + ws.readyState;
-        }, 1000);
+      const previewFile = () => {
+        let preview = document.querySelector('img');
+        let file    = document.querySelector('input[type=file]').files[0];
+        let reader  = new FileReader();
 
-        // 연결이 수립되면 서버에 메시지를 전송한다
-        ws.onopen = (event) => {
-          log.innerHTML = '4';
-          ws.send("this is test: " + msg);
-          log.innerHTML = '5';
-        };
+        reader.addEventListener("load", () => {
+          preview.src = reader.result;
+          alert(reader.result);
+        }, false);
 
-        ws.onerror = event => {
-          log.innerHTML = event
+        if (file) {
+          reader.readAsDataURL(file);
         }
-      }
-      document.querySelector('#bt').addEventListener('click', access);
+      };
     </script>
   </body>
 </html>
