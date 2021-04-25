@@ -1,23 +1,30 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-  <body>
-    <input type="file" onchange="previewFile()"><br>
-    <img src="" height="200" alt="이미지 미리보기...">
-    <script>
-      const previewFile = () => {
-        let preview = document.querySelector('img');
-        let file    = document.querySelector('input[type=file]').files[0];
-        let reader  = new FileReader();
 
-        reader.addEventListener("load", () => {
-          preview.src = reader.result;
-          alert(reader.result);
-        }, false);
+<body>
 
-        if (file) {
-          reader.readAsDataURL(file);
-        }
-      };
-    </script>
-  </body>
+  <input type="file" value="test" onchange="read()">
+  <label>Result:</label>
+  <pre><code id="result"></code></pre>
+
+  <script type="text/javascript" src="qr.js"></script>
+  <script type="text/javascript">
+    const codeReader = new ZXing.BrowserQRCodeReader()
+    console.log('ZXing code reader initialized')
+
+    const read = () => {
+      let img = new Image();
+      let file = document.querySelector('input[type=file]').files[0];
+      let reader = new FileReader();
+      reader.addEventListener("load", async () => {
+        img.src = reader.result;
+        let result = await codeReader.decodeFromImage(img);
+        alert(result.url)
+      });
+      if (file) reader.readAsDataURL(file);
+    };
+  </script>
+
+</body>
+
 </html>
