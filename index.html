@@ -3,34 +3,34 @@
 
 <body>
 
-  <div>
+  <!-- <div>
     <a class="button" id="resetButton">Reset</a>
-  </div>
+  </div> -->
 
   <div>
     <video id="video" width="300" height="200" style="border: 1px solid gray"></video>
   </div>
 
-  <div id="sourceSelectPanel" style="display:none">
+  <!-- <div id="sourceSelectPanel" style="display:none">
     <label for="sourceSelect">Change video source:</label>
     <select id="sourceSelect" style="max-width:400px">
     </select>
-  </div>
+  </div> -->
 
-  <div style="display: table">
+  <!-- <div style="display: table">
     <label for="decoding-style"> Decoding Style:</label>
     <select id="decoding-style" size="1">
       <option value="once">Decode once</option>
       <option value="continuously">Decode continuously</option>
     </select>
-  </div>
+  </div> -->
 
   <label>Result:</label>
   <pre><code id="result"></code></pre>
 
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
   <script type="text/javascript">
-    function decodeOnce(codeReader, selectedDeviceId) {
+    const decodeOnce = (codeReader, selectedDeviceId) => {
       codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
         console.log(result)
         document.querySelector('#result').textContent = result.text
@@ -46,29 +46,29 @@
       console.log('ZXing code reader initialized')
 
       // reset button
-      document.querySelector('#resetButton').addEventListener('click', () => {
-        codeReader.reset()
-        document.querySelector('#result').textContent = '';
-        console.log('Reset.')
-      })
+      // document.querySelector('#resetButton').addEventListener('click', () => {
+      //   codeReader.reset()
+      //   document.querySelector('#result').textContent = '';
+      //   console.log('Reset.')
+      // })
 
       let videoInputDevices = await codeReader.getVideoInputDevices();
       let selectedDeviceId = videoInputDevices[0].deviceId;
 
-      const sourceSelect = document.querySelector('#sourceSelect')
-      sourceSelect.append(...videoInputDevices.map((element) => {
-        const sourceOption = document.createElement('option');
-        sourceOption.text = element.label;
-        sourceOption.value = element.deviceId;
-        return sourceOption;
-      }));
-      sourceSelect.addEventListener('change', () => {
-        selectedDeviceId = sourceSelect.value;
-      });
+      // const sourceSelect = document.querySelector('#sourceSelect')
+      // sourceSelect.append(...videoInputDevices.map((element) => {
+      //   const sourceOption = document.createElement('option');
+      //   sourceOption.text = element.label;
+      //   sourceOption.value = element.deviceId;
+      //   return sourceOption;
+      // }));
+      // sourceSelect.addEventListener('change', () => {
+      //   selectedDeviceId = sourceSelect.value;
+      // });
 
       if (videoInputDevices.length >= 1) {
-        const sourceSelectPanel = document.querySelector('#sourceSelectPanel');
-        sourceSelectPanel.style.display = 'block';
+        // const sourceSelectPanel = document.querySelector('#sourceSelectPanel');
+        // sourceSelectPanel.style.display = 'block';
         decodeOnce(codeReader, selectedDeviceId);
       }
     })
