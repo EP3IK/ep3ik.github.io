@@ -13,7 +13,7 @@
   <script type="text/javascript" src="https://unpkg.com/@zxing/library@latest"></script>
   <script type="text/javascript">
     const decodeOnce = async (codeReader, selectedDeviceId) => {
-      let result = codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video');
+      let result = await codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video');
       console.log(result)
       document.querySelector('#result').textContent = result.text
       // codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video').then((result) => {
