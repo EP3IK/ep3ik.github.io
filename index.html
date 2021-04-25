@@ -40,54 +40,50 @@
       })
     }
 
-    window.addEventListener('load', function () {
+    window.addEventListener('load', async () => {
       let selectedDeviceId;
       const codeReader = new ZXing.BrowserQRCodeReader()
       console.log('ZXing code reader initialized')
 
-      codeReader.getVideoInputDevices()
-        .then((videoInputDevices) => {
-          const sourceSelect = document.getElementById('sourceSelect')
-          selectedDeviceId = videoInputDevices[0].deviceId
-          if (videoInputDevices.length >= 1) {
-            videoInputDevices.forEach((element) => {
-              const sourceOption = document.createElement('option')
-              sourceOption.text = element.label
-              sourceOption.value = element.deviceId
-              sourceSelect.appendChild(sourceOption)
-            })
+      let videoInputDevices = await codeReader.getVideoInputDevices();
 
-            sourceSelect.onchange = () => {
-              selectedDeviceId = sourceSelect.value;
-            };
-
-            const sourceSelectPanel = document.getElementById('sourceSelectPanel')
-            sourceSelectPanel.style.display = 'block'
-          }
-
-          document.getElementById('startButton').addEventListener('click', () => {
-
-            const decodingStyle = document.getElementById('decoding-style').value;
-
-            if (decodingStyle == "once") {
-              decodeOnce(codeReader, selectedDeviceId);
-            } else {
-              decodeContinuously(codeReader, selectedDeviceId);
-            }
-
-            console.log(`Started decode from camera with id ${selectedDeviceId}`)
-          })
-
-          document.getElementById('resetButton').addEventListener('click', () => {
-            codeReader.reset()
-            document.getElementById('result').textContent = '';
-            console.log('Reset.')
-          })
-          document.getElementById('startButton').click();
+      const sourceSelect = document.getElementById('sourceSelect')
+      selectedDeviceId = videoInputDevices[0].deviceId
+      if (videoInputDevices.length >= 1) {
+        videoInputDevices.forEach((element) => {
+          const sourceOption = document.createElement('option')
+          sourceOption.text = element.label
+          sourceOption.value = element.deviceId
+          sourceSelect.appendChild(sourceOption)
         })
-        .catch((err) => {
-          console.error(err)
-        })
+
+        sourceSelect.onchange = () => {
+          selectedDeviceId = sourceSelect.value;
+        };
+
+        const sourceSelectPanel = document.getElementById('sourceSelectPanel')
+        sourceSelectPanel.style.display = 'block'
+      }
+
+          // document.getElementById('startButton').addEventListener('click', () => {
+
+          //   const decodingStyle = document.getElementById('decoding-style').value;
+
+          //   if (decodingStyle == "once") {
+          //     decodeOnce(codeReader, selectedDeviceId);
+          //   } else {
+          //     decodeContinuously(codeReader, selectedDeviceId);
+          //   }
+
+          //   console.log(`Started decode from camera with id ${selectedDeviceId}`)
+          // })
+
+      document.getElementById('resetButton').addEventListener('click', () => {
+        codeReader.reset()
+        document.getElementById('result').textContent = '';
+        console.log('Reset.')
+      })
+      decodeOnce(codeReader, selectedDeviceId);
     })
   </script>
 
