@@ -13,19 +13,19 @@
       const codeReader = new ZXing.BrowserQRCodeReader()
       console.log('ZXing code reader initialized', codeReader)
 
-      let videoInputDevices = await codeReader.getVideoInputDevices();
+      let videoInputDevices = await codeReader.listVideoInputDevices();
       let selectedDeviceId = videoInputDevices[0].deviceId;
 
       if (videoInputDevices.length >= 1) {
-        
+        /*
         // once
         let result = await codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video');
         console.log(result)
         alert(result.text);
-        
-/*
+        */
+
         // continuously
-        codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
+        await codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
           if (result?.text.startsWith('JBDECK')) {
             let ws = `ws://${result.text.slice(7)}`;
             alert(ws)
@@ -33,7 +33,7 @@
           if (err && !(err instanceof ZXing.NotFoundException)) {
             console.error(err)
           }
-        })*/
+        })
       }
     })
   </script>
