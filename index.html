@@ -17,13 +17,13 @@
       let selectedDeviceId = videoInputDevices[0].deviceId;
 
       if (videoInputDevices.length >= 1) {
-        /*
+        
         // once
         let result = await codeReader.decodeFromInputVideoDevice(selectedDeviceId, 'video');
         console.log(result)
         alert(result.text);
-        */
-
+        
+/*
         // continuously
         codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
           if (result?.text.startsWith('JBDECK')) {
@@ -33,7 +33,7 @@
           if (err && !(err instanceof ZXing.NotFoundException)) {
             console.error(err)
           }
-        })
+        })*/
       }
     })
   </script>
