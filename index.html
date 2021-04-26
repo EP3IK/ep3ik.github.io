@@ -25,23 +25,16 @@
         */
 
         // continuously
-        // await codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
-        //   if (result?.text.startsWith('JBDECK')) {
-        //     let ws = `ws://${result.text.slice(7)}`;
-        //     alert(ws)
-        //   }
-        //   if (err && !(err instanceof ZXing.NotFoundException)) {
-        //     console.error(err)
-        //   }
-        // })
         codeReader.decodeFromVideoDevice(selectedDeviceId, 'video', (result, err) => {
           if (result) {
             console.log(result)
-            document.getElementById('result').textContent = result.text
+            if (result.text.startsWith('JBDECK') {
+              let ws = `ws://${result.text.slice(7)}`;
+              alert(ws)
+            }
           }
           if (err && !(err instanceof ZXing.NotFoundException)) {
             console.error(err)
-            document.getElementById('result').textContent = err
           }
         })
       }
