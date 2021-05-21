@@ -4,10 +4,9 @@
   <body>
     <div id="main" style="text-align: center;"></div>
 
-    <!-- <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg" version="1.1">
-      <circle cx="200" cy="200" r="170" style="fill: none; stroke: white; stroke-width: 30"/>
-      <polyline points="100 200 200 100 300 200 240 200 240 300 160 300 160 200 100 200" stroke="white" stroke-width="30"
-      stroke-linecap="round" fill="white" stroke-linejoin="round"/>
+    <!-- <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <circle cx="20" cy="20" r="16" style="fill: none; stroke: white; stroke-width: 3"/>
+      <polyline points="11 20 20 11 29 20 23 20 23 29 17 29 17 20 11 20" stroke="white" stroke-width="3" stroke-linecap="round" fill="white" stroke-linejoin="round"/>
     </svg> -->
 
     <script>
@@ -15,7 +14,7 @@
 
       let img = new Image();
       img.style.width = '48px';
-      img.src = 'data:image/svg+xml,%3Csvg%20width%3D%22400%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%3E%0A%20%20%20%20%20%20%3Ccircle%20cx%3D%22200%22%20cy%3D%22200%22%20r%3D%22170%22%20style%3D%22fill%3A%20none%3B%20stroke%3A%20white%3B%20stroke-width%3A%2030%22%2F%3E%0A%20%20%20%20%20%20%3Cpolyline%20points%3D%22100%20200%20200%20100%20300%20200%20240%20200%20240%20300%20160%20300%20160%20200%20100%20200%22%20stroke%3D%22white%22%20stroke-width%3D%2230%22%0A%20%20%20%20%20%20stroke-linecap%3D%22round%22%20fill%3D%22white%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%20%20%20%20%3C%2Fsvg%3E';
+      img.src = 'data:image/svg+xml,%3Csvg%20width%3D%2240%22%20height%3D%2240%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%3E%0A%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%2216%22%20style%3D%22fill%3A%20none%3B%20stroke%3A%20white%3B%20stroke-width%3A%203%22%2F%3E%0A%3Cpolyline%20points%3D%2211%2020%2020%2011%2029%2020%2023%2020%2023%2029%2017%2029%2017%2020%2011%2020%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20fill%3D%22white%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%3C%2Fsvg%3E';
       
       document.body.style.backgroundColor = 'DarkGray';
       window.addEventListener("keydown", e => {
@@ -25,29 +24,34 @@
             main.lastChild.remove();
             break;
           case 'ArrowUp':
+          case 'KeyW':
             let up = img.cloneNode(true);
-            up.style.filter = 'drop-shadow(0 0 8px Gold)';
+            up.style.filter = 'drop-shadow(0 0 5px Gold)';
             main.append(up);
             break;
           case 'ArrowDown':
+          case 'KeyS':
             let down = img.cloneNode(true);
-            down.style.filter = 'drop-shadow(0 0 8px Crimson)';
+            down.style.filter = 'drop-shadow(0 0 5px Crimson)';
             down.style.transform = 'rotate(0.5turn)';
             main.append(down);
             break;
           case 'ArrowLeft':
+          case 'KeyA':
             let left = img.cloneNode(true);
-            left.style.filter = 'drop-shadow(0 0 8px Lime)';
+            left.style.filter = 'drop-shadow(0 0 5px Lime)';
             left.style.transform = 'rotate(0.75turn)';
             main.append(left);
             break;
           case 'ArrowRight':
+          case 'KeyD':
             let right = img.cloneNode(true);
-            right.style.filter = 'drop-shadow(0 0 8px DeepSkyBlue)';
+            right.style.filter = 'drop-shadow(0 0 5px DeepSkyBlue)';
             right.style.transform = 'rotate(0.25turn)';
             main.append(right);
             break;
           case 'Space':
+          case 'Escape':
             main.innerHTML = '';
             break;
         }
