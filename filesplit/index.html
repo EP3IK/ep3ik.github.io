@@ -17,7 +17,9 @@
         console.log(file.size)
       });
       let button = document.querySelector('#button');
+      let result = document.querySelector('#result');
       button.addEventListener('click', () => {
+        result.innerHTML = '';
         let mb = document.querySelector('#mb').value << 20;
         for (let i = 0; i < file.size / mb; ++i) {
           let div = document.createElement('div');
@@ -27,7 +29,7 @@
           link.download = file.name + '.' + ('00' + (i + 1)).slice(-3);
           link.href = URL.createObjectURL(file.slice(mb * i, mb * (i + 1), 'application/octet-stream'));
           div.append(link);
-          document.querySelector('#result').append(div);
+          result.append(div);
         }
       });
     </script>
