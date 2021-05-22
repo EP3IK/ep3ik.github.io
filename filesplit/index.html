@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head></head>
+  <body>
+    <div>
+      <input type="file" id="file"><br>
+      <label>By Size: </label><input type="number" id="mb" style="width: 30px;"><label>MB</label><br>
+      <input type="button" id="button" value="split!">
+    </div>
+    <div id="result"></div>
+    <script>
+      let file;
+      let fileInput = document.querySelector('#file');
+      fileInput.addEventListener('change', () => {
+        console.log(fileInput.files[0]);
+        file = fileInput.files[0];
+        console.log(file.size)
+      });
+      let button = document.querySelector('#button');
+      button.addEventListener('click', () => {
+        let mb = document.querySelector('#mb').value << 20;
+        for (let i = 0; i < file.size / mb; ++i) {
+          let div = document.createElement('div');
+          let link = document.createElement('a');
+          link.innerHTML = 'download' + (i + 1);
+          // link.target = '_blank';
+          link.download = file.name + '.' + ('00' + (i + 1)).slice(-3);
+          link.href = URL.createObjectURL(file.slice(mb * i, mb * (i + 1), 'application/octet-stream'));
+          div.append(link);
+          document.querySelector('#result').append(div);
+        }
+      });
+    </script>
+  </body>
+</html>
