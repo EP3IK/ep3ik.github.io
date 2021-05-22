@@ -25,7 +25,7 @@
           let div = document.createElement('div');
           let link = document.createElement('a');
           link.innerHTML = 'download' + (i + 1);
-          // link.target = '_blank';
+          link.target = '_blank';
           link.download = file.name + '.' + ('00' + (i + 1)).slice(-3);
           link.href = URL.createObjectURL(file.slice(mb * i, mb * (i + 1), 'application/octet-stream'));
           div.append(link);
