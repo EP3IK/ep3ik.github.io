@@ -60,22 +60,26 @@ const split = async (file, size, zip) => {
 };
 
 button.addEventListener('click', async () => {
-  let size = selectSplit.value === 'number' ? Math.ceil(file.size / +inputNumber.value) : inputSize * +selectSize;
-  let zip = checkboxZip.checked;
-
-  button.disabled = true;
-  let blobMap = await split(file, size, zip);
-  button.disabled = false;
-
-  result.innerHTML = '';
-  for (const [name, blob] of blobMap) {
-    let p = document.createElement('p');
-    let a = document.createElement('a');
-    a.innerHTML = name;
-    // a.target = '_blank';
-    a.download = name;
-    a.href = URL.createObjectURL(blob);
-    p.append(a);
-    result.append(p);
+  try {
+    let size = selectSplit.value === 'number' ? Math.ceil(file.size / +inputNumber.value) : inputSize * +selectSize;
+    let zip = checkboxZip.checked;
+  
+    button.disabled = true;
+    let blobMap = await split(file, size, zip);
+    button.disabled = false;
+  
+    result.innerHTML = '';
+    for (const [name, blob] of blobMap) {
+      let p = document.createElement('p');
+      let a = document.createElement('a');
+      a.innerHTML = name;
+      // a.target = '_blank';
+      a.download = name;
+      a.href = URL.createObjectURL(blob);
+      p.append(a);
+      result.append(p);
+    }
+  } catch (err) {
+    result.innerHTML = err;
   }
 });
