@@ -1,37 +1,84 @@
 <!DOCTYPE html>
 <html>
-  <head></head>
-  <body>
+
+<head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <script type="text/javascript" src="https://raw.githubusercontent.com/Stuk/jszip/master/dist/jszip.min.js"></script>
+  <!-- <script type="text/javascript" src="./jszip.min.js"></script> -->
+</head>
+
+<body>
+  <div>
     <div>
-      <input type="file" id="file"><br>
-      <label>By Size: </label><input type="number" id="mb" style="width: 30px;"><label>MB</label><br>
-      <input type="button" id="button" value="split!">
+      <h3>File</h3>
+      <div>
+        <!-- input[type=file] -->
+        <input type="file" id="file">
+      </div>
+      <div class="info" style="display: none;">
+        <!-- info -->
+        <h4>Info</h4>
+        <ul id="fileInfo">
+          <li></li>
+          <li></li>
+        </ul>
+      </div>
     </div>
-    <div id="result"></div>
-    <script>
-      let file;
-      let fileInput = document.querySelector('#file');
-      fileInput.addEventListener('change', () => {
-        console.log(fileInput.files[0]);
-        file = fileInput.files[0];
-        console.log(file.size)
-      });
-      let button = document.querySelector('#button');
-      let result = document.querySelector('#result');
-      button.addEventListener('click', () => {
-        result.innerHTML = '';
-        let mb = document.querySelector('#mb').value << 20;
-        for (let i = 0; i < file.size / mb; ++i) {
-          let div = document.createElement('div');
-          let link = document.createElement('a');
-          link.innerHTML = 'download' + (i + 1);
-          link.target = '_blank';
-          link.download = file.name + '.' + ('00' + (i + 1)).slice(-3);
-          link.href = URL.createObjectURL(file.slice(mb * i, mb * (i + 1), 'application/octet-stream'));
-          div.append(link);
-          result.append(div);
-        }
-      });
-    </script>
-  </body>
+    <div>
+      <h3>Split Option</h3>
+      <div>
+        <!-- select -->
+        <select id="split">
+          <option value="number">Number of files</option>
+          <option value="size">Size of files</option>
+        </select>
+      </div>
+      <div id="number">
+        <!-- number of files -->
+        <label>
+          Number of files
+          <input type="number" min="1" max="100" value="1">
+        </label>
+      </div>
+      <div id="size">
+        <!-- size of files -->
+        <label>
+          Size
+          <input type="number" min="1" value="1">
+          <select>
+            <option value="1">B</option>
+            <option value="1024">KB</option>
+            <option value="1048576" selected>MB</option>
+            <option value="1073741824">GB</option>
+          </select>
+        </label>
+      </div>
+      <div class="info">
+        <!-- info -->
+      </div>
+    </div>
+    <div id="other">
+      <h3>Other Option</h3>
+      <div>
+        <!-- input[type=checkbox] -->
+        <label>
+          <input type="checkbox">
+          Create .zip file
+        </label>
+      </div>
+    </div>
+    <div>
+      <!-- input[type=button] -->
+      <input type="button" id="button" value="Split!">
+    </div>
+    <div>
+      <h3>Result</h3>
+      <div id="result">
+        <!-- a href -->
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="./index.js"></script>
+</body>
+
 </html>
