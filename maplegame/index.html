@@ -4,19 +4,19 @@
   <body>
     <div id="main" style="text-align: center;"></div>
 
-    <!-- <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" version="1.1">
-      <circle cx="20" cy="20" r="16" style="fill: none; stroke: white; stroke-width: 3"/>
-      <polyline points="11 20 20 11 29 20 23 20 23 29 17 29 17 20 11 20" stroke="white" stroke-width="3" stroke-linecap="round" fill="white" stroke-linejoin="round"/>
+    <!-- <svg width="300" height="300" xmlns="http://www.w3.org/2000/svg" version="1.1">
+      <circle cx="150" cy="150" r="125" style="fill: none; stroke: white; stroke-width: 20"/>
+      <polyline points="80 150 150 80 220 150 175 150 175 220 125 220 125 150 80 150" stroke="white" stroke-width="20" stroke-linecap="round" fill="white" stroke-linejoin="round"/>
     </svg> -->
 
     <script>
       const main = document.querySelector('#main');
 
       let img = new Image();
-      img.style.width = '48px';
-      img.src = 'data:image/svg+xml,%3Csvg%20width%3D%2240%22%20height%3D%2240%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%3E%0A%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%2216%22%20style%3D%22fill%3A%20none%3B%20stroke%3A%20white%3B%20stroke-width%3A%203%22%2F%3E%0A%3Cpolyline%20points%3D%2211%2020%2020%2011%2029%2020%2023%2020%2023%2029%2017%2029%2017%2020%2011%2020%22%20stroke%3D%22white%22%20stroke-width%3D%223%22%20stroke-linecap%3D%22round%22%20fill%3D%22white%22%20stroke-linejoin%3D%22round%22%2F%3E%0A%3C%2Fsvg%3E';
+      img.style.width = '45px';
+      img.src = 'data:image/svg+xml,%3Csvg%20width%3D%22300%22%20height%3D%22300%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%3E%3Ccircle%20cx%3D%22150%22%20cy%3D%22150%22%20r%3D%22125%22%20style%3D%22fill%3A%20none%3B%20stroke%3A%20white%3B%20stroke-width%3A%2020%22%2F%3E%3Cpolyline%20points%3D%2280%20150%20150%2080%20220%20150%20175%20150%20175%20220%20125%20220%20125%20150%2080%20150%22%20stroke%3D%22white%22%20stroke-width%3D%2220%22%20stroke-linecap%3D%22round%22%20fill%3D%22white%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E';
       
-      document.body.style.backgroundColor = 'DarkGray';
+      document.body.style.backgroundColor = 'rgba(33, 101, 124, 0.5)';
       window.addEventListener("keydown", e => {
         console.log(e)
         switch (e.code) {
@@ -57,5 +57,6 @@
         }
       });
     </script>
+    <script type="text/javascript" src="./index.js"></script>
   </body>
 </html>
