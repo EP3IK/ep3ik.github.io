@@ -13,10 +13,15 @@
       grid-template-columns: repeat(5, 1fr);
       grid-gap: 5px;
     }
+
+    .selected {
+      filter: brightness(1.8);
+    }
   </style>
 </head>
 
 <body>
+  <div id="description">마우스를 우클릭해서 블록 선택, 키보드 방향키를 눌러서 이동</div>
   <div id="main">
   </div>
   <script>
@@ -45,7 +50,9 @@
       div.style.gridArea = `${pos[0] + 1}/${pos[1] + 1}/span ${size[0]}/span ${size[1]}`;
       div.addEventListener('click', () => {
         console.log('time to move', name);
+        if (blocks.has(now)) blocks.get(now).div.classList.remove('selected');
         now = name;
+        blocks.get(now).div.classList.add('selected');
       });
       main.append(div);
       blocks.get(name).div = div;
