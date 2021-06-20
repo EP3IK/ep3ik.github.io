@@ -4,6 +4,10 @@
 <head>
   <title>Layton 97 simulator</title>
   <style>
+    body {
+      touch-action: none;
+    }
+
     #main {
       display: grid;
       height: 400px;
@@ -56,6 +60,95 @@
       });
       main.append(div);
       blocks.get(name).div = div;
+
+
+      let clientX, clientY;
+      div.addEventListener('touchstart', e => {
+        // Cache the client X/Y coordinates
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }, false);
+      div.addEventListener('touchend', e => {
+        let deltaX, deltaY;
+
+        // Compute the change in X and Y coordinates.
+        // The first touch point in the changedTouches
+        // list is the touch point that was just removed from the surface.
+        deltaX = e.changedTouches[0].clientX - clientX;
+        deltaY = e.changedTouches[0].clientY - clientY;
+
+        let p = document.createElement('p');
+        p.innerHTML = `${deltaX}, ${deltaY}`;
+        document.body.append();
+
+        // Process the data ...
+        if (!name) return;
+        let canMove = true;
+        let block = blocks.get(name);
+        let [r, c] = block.pos;
+        if (deltaX === 0 && deltaY === 0) return;
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          if (deltaX > 0) {
+            c++;
+            for (let dr = 0; dr < block.size[0]; ++dr) {
+              if (c < 5 && empty.includes(`${r + dr}${c - 1 + block.size[1]}`)) continue;
+              canMove = false;
+            }
+            if (canMove) {
+              block.pos = [r, c];
+              block.div.style.gridArea = `${r + 1}/${c + 1}/span ${block.size[0]}/span ${block.size[1]}`;
+              for (let dr = 0; dr < block.size[0]; ++dr) {
+                empty = empty.filter(v => v !== `${r + dr}${c - 1 + block.size[1]}`);
+                empty.push(`${r + dr}${c - 1}`);
+              }
+            }
+          } else {
+            c--;
+            for (let dr = 0; dr < block.size[0]; ++dr) {
+              if (c >= 0 && empty.includes(`${r + dr}${c}`)) continue;
+              canMove = false;
+            }
+            if (canMove) {
+              block.pos = [r, c];
+              block.div.style.gridArea = `${r + 1}/${c + 1}/span ${block.size[0]}/span ${block.size[1]}`;
+              for (let dr = 0; dr < block.size[0]; ++dr) {
+                empty = empty.filter(v => v !== `${r + dr}${c}`);
+                empty.push(`${r + dr}${c + block.size[1]}`);
+              }
+            }
+          }
+        } else {
+          if (deltaY > 0) {
+            r++;
+            for (let dc = 0; dc < block.size[1]; ++dc) {
+              if (r < 4 && empty.includes(`${r - 1 + block.size[0]}${c + dc}`)) continue;
+              canMove = false;
+            }
+            if (canMove) {
+              block.pos = [r, c];
+              block.div.style.gridArea = `${r + 1}/${c + 1}/span ${block.size[0]}/span ${block.size[1]}`;
+              for (let dc = 0; dc < block.size[1]; ++dc) {
+                empty = empty.filter(v => v !== `${r - 1 + block.size[0]}${c + dc}`);
+                empty.push(`${r - 1}${c + dc}`);
+              }
+            }
+          } else {
+            r--;
+            for (let dc = 0; dc < block.size[1]; ++dc) {
+              if (r >= 0 && empty.includes(`${r}${c + dc}`)) continue;
+              canMove = false;
+            }
+            if (canMove) {
+              block.pos = [r, c];
+              block.div.style.gridArea = `${r + 1}/${c + 1}/span ${block.size[0]}/span ${block.size[1]}`;
+              for (let dc = 0; dc < block.size[1]; ++dc) {
+                empty = empty.filter(v => v !== `${r}${c + dc}`);
+                empty.push(`${r + block.size[0]}${c + dc}`);
+              }
+            }
+          }
+        }
+      }, false);
     }
     window.addEventListener("keydown", e => {
       if (!now) return;
@@ -124,6 +217,9 @@
           }
           break;
       }
+
+
+
       console.log(empty)
       // now = null;
     });
