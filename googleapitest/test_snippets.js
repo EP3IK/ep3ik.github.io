@@ -54,7 +54,7 @@ function handleClientLoad() {
 function initClient() {
   gapi.client.init({
     discoveryDocs: DISCOVERY_DOCS,
-    clientId: '473749893102-knvjm7o30up30hsub6e8oglj32571of1.apps.googleusercontent.com',
+    clientId: '695759252535-0ol8k9h0tq1aee2qfl6cm9r7ad7muhi2.apps.googleusercontent.com',
     scope: SCOPES.join(' '),
   }).then(() => {
     console.log('Initiated client');
