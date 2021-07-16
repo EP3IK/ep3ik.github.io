@@ -1,0 +1,18 @@
+:root {
+  --src: url();
+}
+
+#app {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
+  width: 800px;
+  height: 600px;
+  background: var(--src) 0 0;
+  border: outset;
+}
+
+.selected {
+  background: rgba(0,0,0,.7);
+  /* box-shadow: 0 10px 16px 0 rgb(0 0 0 / 20%), 0 6px 20px 0 rgb(0 0 0 / 19%); */
+}
