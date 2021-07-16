@@ -138,3 +138,4 @@ window.addEventListener('focus', () => {
   focusHandler();
 })
 document.querySelector('#app').append(...Array(20).fill(0).map(_ => document.createElement('div')));
+navigator?.clipboard?.read?.();
