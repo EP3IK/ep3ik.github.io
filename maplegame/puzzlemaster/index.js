@@ -1,4 +1,4 @@
-const status = new Map();
+﻿const status = new Map();
 
 const getImageFromUrl = async src => new Promise(resolve => {
   const image = new Image();
@@ -127,8 +127,9 @@ const focusHandler = async () => {
     // status에 index 등록한다.
     status.set('index', index);
     // 배경에 index.png 깔아놓는다.
-    const root = document.querySelector(':root');
-    root.style.setProperty('--src', `url(${index}.png)`);
+    // const root = document.querySelector(':root');
+    // root.style.setProperty('--src', `url(${index}.png)`);
+    document.querySelector('#app').style.background = `url(${index}.png) 0 0`;
     document.querySelector('.selected')?.classList.remove('selected');
   }
 };
