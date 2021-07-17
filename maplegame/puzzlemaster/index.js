@@ -45,10 +45,10 @@ const getIndexFromCapture = (dataArray, image) => {
   const { buffer } = imageData.data;
   const int32Array = new Int32Array(buffer);
   const index = int32Array.findIndex((v, i, a) => {
-    const t = 255 << 24;
-    return v === t && a[i + 1] === t && a[i + width] === t;
+    return v === -15654349 && a[i + 1] === -14540237 && a[i + width] === -14540254 && a[i + width + 1] === -16777216;
   });
-  const cropData = int32Array[index + (width + 1) * 142];
+  console.log(index % width, ~~(index / width))
+  const cropData = int32Array[index + (width + 1) * 143];
   // dataArray와 비교해서 같은 데이터가 있는 인덱스를 리턴한다.
   return dataArray.findIndex(data => data === cropData);
 };
