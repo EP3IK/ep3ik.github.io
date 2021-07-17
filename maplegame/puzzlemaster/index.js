@@ -1,4 +1,4 @@
-﻿const status = new Map();
+const status = new Map();
 
 const getImageFromUrl = async src => new Promise(resolve => {
   const image = new Image();
@@ -7,19 +7,16 @@ const getImageFromUrl = async src => new Promise(resolve => {
   image.src = src;
 });
 
-const getDataArray = async () => {
-  const spriteImage = await getImageFromUrl('sprite.png');
-  const canvas = document.createElement('canvas');
-  canvas.width = 39;
-  canvas.height = 1;
-  const context = canvas.getContext('2d');
-  context.drawImage(spriteImage, 0, 0);
-  return Array.from({ length: 39 }, (_, i) => {
-    const imageData = context.getImageData(i, 0, 1, 1);
-    const int32Array = new Int32Array(imageData.data.buffer);
-    return int32Array[0];
-  });
-};
+const getDataArray = async () => Promise.all(
+  Array.from({ length: 39 }, async (_, i) => {
+    const image = await getImageFromUrl(`${i}.png`);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 106;
+    const context = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+    return canvas.toDataURL();
+  })
+);
 
 const getImageFromClipboard = async () => {
   const items = await navigator?.clipboard?.read?.();
@@ -35,6 +32,7 @@ const getImageFromClipboard = async () => {
 };
 
 const getIndexFromCapture = (dataArray, image) => {
+  console.log(dataArray)
   // sprite 이미지와 비교할 지점의 좌표를 찾고 데이터를 잘라낸다.
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d'),
@@ -47,10 +45,14 @@ const getIndexFromCapture = (dataArray, image) => {
   const index = int32Array.findIndex((v, i, a) => {
     return v === -15654349 && a[i + 1] === -14540237 && a[i + width] === -14540254 && a[i + width + 1] === -16777216;
   });
-  console.log(index % width, ~~(index / width))
-  const cropData = int32Array[index + (width + 1) * 143];
+  const dx = index % width + 2, dy = ~~(index / width) + 2;
+  canvas.width = canvas.height = 106;
+  context.drawImage(image, -dx, -dy);
+  const cropData = canvas.toDataURL();
+  console.log(dataArray.indexOf(cropData))
   // dataArray와 비교해서 같은 데이터가 있는 인덱스를 리턴한다.
-  return dataArray.findIndex(data => data === cropData);
+  return dataArray.indexOf(cropData);
+  // return dataArray.findIndex(data => data === cropData);
 };
 
 const getRCDataArray = async index => {
