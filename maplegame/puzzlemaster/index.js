@@ -1,4 +1,4 @@
-const status = new Map();
+﻿const status = new Map();
 
 const getImageFromUrl = async src => new Promise(resolve => {
   const image = new Image();
@@ -11,10 +11,12 @@ const getDataArray = async () => Promise.all(
   Array.from({ length: 39 }, async (_, i) => {
     const image = await getImageFromUrl(`${i}.png`);
     const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 106;
+    canvas.width = 800;
+    canvas.height = 600;
     const context = canvas.getContext('2d');
     context.drawImage(image, 0, 0);
-    return canvas.toDataURL();
+    return context.getImageData(95, 55, 50, 50).data;
+    // return context.getImageData(1, 1, 105, 105).data;
   })
 );
 
@@ -32,7 +34,7 @@ const getImageFromClipboard = async () => {
 };
 
 const getIndexFromCapture = (dataArray, image) => {
-  console.log(dataArray)
+  console.log(new Set(dataArray.map(v => v.join(','))).size)
   // sprite 이미지와 비교할 지점의 좌표를 찾고 데이터를 잘라낸다.
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d'),
@@ -45,31 +47,30 @@ const getIndexFromCapture = (dataArray, image) => {
   const index = int32Array.findIndex((v, i, a) => {
     return v === -15654349 && a[i + 1] === -14540237 && a[i + width] === -14540254 && a[i + width + 1] === -16777216;
   });
-  const dx = index % width + 2, dy = ~~(index / width) + 2;
-  canvas.width = canvas.height = 106;
-  context.drawImage(image, -dx, -dy);
-  const cropData = canvas.toDataURL();
-  console.log(dataArray.indexOf(cropData))
+  const sx = index % width + 97, sy = ~~(index / width) + 57;
+  const cropData = context.getImageData(sx, sy, 50, 50).data;
+  console.log(cropData)
   // dataArray와 비교해서 같은 데이터가 있는 인덱스를 리턴한다.
-  return dataArray.indexOf(cropData);
+  return dataArray.findIndex(data => data.every((v, i) => v === cropData[i]));
   // return dataArray.findIndex(data => data === cropData);
 };
 
 const getRCDataArray = async index => {
   const image = await getImageFromUrl(`${index}.png`);
   const canvas = document.createElement('canvas');
-  canvas.width = canvas.height = 50;
+  canvas.width = 800;
+  canvas.height = 600;
   const context = canvas.getContext('2d');
-  // context.drawImage(spriteImage, 0, 0);
+  context.drawImage(image, 0, 0);
   return Array.from({ length: 4 }, (_, r) => {
     return Array.from({ length: 5 }, (_, c) => {
-      context.drawImage(image, -160 * c - 90, -150 * r - 60);
-      return canvas.toDataURL();
+      const sx = 55 + 160 * c, sy = 65 + 150 * r;
+      return context.getImageData(sx, sy, 100, 30).data;
     });
   });
 };
 
-const getRCFromCapture = (base64Array, image) => {
+const getRCFromCapture = (dataArray, image) => {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d'),
     width = canvas.width = image.naturalWidth;
@@ -81,15 +82,12 @@ const getRCFromCapture = (base64Array, image) => {
   const index = int32Array.findIndex((v, i, a) => {
     return v === -2228225 && a[i + 1] === -3346689 && a[i + width] === -2228225 && a[i + width + 1] === -16777216;
   });
-  const row = ~~(index / width) + 61, col = index % width + 91;
-
-  canvas.width = canvas.height = 50;
-  context.drawImage(image, -col, -row);
-  const cropData = canvas.toDataURL();
-  console.log(row, col, cropData)
+  const sx = index % width + 56, sy = ~~(index / width) + 66;
+  const cropData = context.getImageData(sx, sy, 100, 30).data;
+  console.log(sx, sy, cropData)
   for (let r = 0; r < 4; ++r) {
     for (let c = 0; c < 5; ++c) {
-      if (base64Array[r][c] === cropData) return [r, c];
+      if (dataArray[r][c].every((v, i) => v === cropData[i])) return [r, c];
     }
   }
   return [-1, -1];
@@ -141,4 +139,8 @@ window.addEventListener('focus', () => {
   focusHandler();
 })
 document.querySelector('#app').append(...Array(20).fill(0).map(_ => document.createElement('div')));
+for (let i = 0; i < 39; ++i) {
+  // preload
+  getImageFromUrl(`${i}.png`);
+}
 navigator?.clipboard?.read?.();
