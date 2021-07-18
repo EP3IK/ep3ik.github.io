@@ -25,11 +25,24 @@ body {
 }
 
 #refresh {
-  font-family: 'paybooc-Medium';
-  font-size: 40px;
+  display: grid;
+  place-items: center;
+  grid-area: 1 / 1 / -1 / -1;
+  z-index: 1;
+  cursor: pointer;
+}
+
+#shell {
+  display: none;
+}
+
+#app:hover>#refresh>#shell {
+  display: grid;
+  place-items: center;
+  height: min-content;
+  font-size: 100px;
   font-weight: bold;
-  width: 800px;
-  height: 200px;
+  filter: drop-shadow(0 0 3px white);
 }
 
 .selected {

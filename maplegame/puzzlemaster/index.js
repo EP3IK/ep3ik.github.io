@@ -156,7 +156,12 @@ const refresh = () => {
 window.addEventListener('load', async () => {
   console.log('window loaded');
   puzzle.set('index-data', await getDataArray());
-  document.querySelector('#app').append(...Array.from({ length: 20 }, () => document.createElement('div')));
+  document.querySelector('#refresh').before(...Array.from({ length: 20 }, (_, i) => {
+    const div = document.createElement('div');
+    const row = ~~(i / 5), col = i % 5;
+    div.style.gridArea = [row + 1, col + 1, row + 2, col + 2].join('/');
+    return div;
+  }));
   navigator?.clipboard?.read?.();
   focusHandler();
 });
