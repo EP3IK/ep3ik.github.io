@@ -1,4 +1,4 @@
-const ext = document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp') ? '.png' : '.png';
+const ext = document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp') ? '.webp' : '.png';
 const info = document.querySelector('#info');
 const puzzle = new Map();
 
