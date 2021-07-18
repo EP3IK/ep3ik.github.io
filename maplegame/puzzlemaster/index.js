@@ -16,11 +16,13 @@ const getDataArray = async () => {
   canvas.height = 600;
   const context = canvas.getContext('2d');
   for (let i = 0; i < 39; ++i) {
+    info.innerHTML = `퍼즐 이미지 다운로드 중... ${i + 1} / 39`;
     const image = await getImageFromUrl(i + ext);
     context.drawImage(image, 0, 0);
     const { data } = context.getImageData(95, 55, 50, 50);
     dataArray.push(data);
   }
+  info.innerHTML = '퍼즐 이미지 다운로드 완료';
   return dataArray;
 };
 
@@ -135,7 +137,7 @@ const focusHandler = async () => {
       info.innerHTML = '클립보드 이미지에 오류가 있습니다. 스크린샷을 다시 찍어주세요.';
       return;
     }
-    info.innerHTML = `퍼즐의 인덱스는 ${index} / 38 입니다.`;
+    info.innerHTML = `퍼즐의 인덱스는 ${index + 1} / 39 입니다.`;
     // puzzle에 index 등록한다.
     puzzle.set('index', index);
     puzzle.set('image', await getImageFromUrl(index + ext));
