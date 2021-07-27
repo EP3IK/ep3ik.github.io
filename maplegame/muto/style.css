@@ -1,0 +1,102 @@
+@font-face {
+  font-family: 'paybooc-Medium';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-07@1.0/paybooc-Medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'paybooc-Medium';
+  background: #262626;
+}
+
+#app {
+  width: 800px;
+  border: outset;
+}
+
+#map {
+  height: 295px;
+}
+
+#map>.ingredient {
+  height: 0px;
+}
+
+#map>.ingredient>img {
+  position: relative;
+  width: 68px;
+  filter: drop-shadow(0 0 5px black);
+  image-rendering: pixelated;
+}
+
+#answer {
+  display: grid;
+  height: 100px;
+  background-color: #225577;
+  grid-template: "image description" 16px "image name" 28px "image ingredients" auto / 100px auto;
+  padding: 5px;
+  gap: 5px;
+}
+
+#answer>.image {
+  display: grid;
+  width: 100px;
+  height: 100px;
+  background-color: #cccccc;
+  grid-area: image;
+  place-items: center;
+}
+
+#answer>.description {
+  grid-area: description;
+  color: #88bbee;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+#answer>.name {
+  grid-area: name;
+  font-size: 24px;
+  font-weight: 900;
+  color: white;
+  text-shadow: #072c41 1px 3px;
+}
+
+#answer>.ingredients {
+  grid-area: ingredients;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  justify-items: center;
+  color: white;
+}
+
+#answer>.ingredients>div {
+  display: grid;
+  max-width: fit-content;
+  grid-auto-flow: column;
+  place-items: center;
+}
+
+#answer>.image>img {
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.foothold {
+  height: 0px;
+}
+
+.foothold>img {
+  position: relative;
+  filter: opacity(0.2);
+}
+
+.foothold>img.selected {
+  filter: opacity(1);
+}
+
+#info {
+  height: 50px;
+  color: white;
+}
