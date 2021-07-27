@@ -43,7 +43,7 @@ class Muto {
       { name: '?', pixel: '119,204,255', array5: Array.from({ length: 16 }, (_, i) => i), array10: Array.from({ length: 16 }, (_, i) => i) },
       { name: 'empty', array10: [0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13] }
     ];
-    this.cuisines = [
+    this.dishes = [
       { name: '헉튀김', description: '헉소리나게 바삭한 튀김요리', composition: [[0, 5], [4, 10]] },
       { name: '앗볶음', description: '깨달음을 얻을 것 같은 볶음요리', composition: [[2, 5], [6, 10]] },
       { name: '이런면', description: '탱탱한 면발이 살아있는 면요리', composition: [[0, 5], [4, 5], [8, 10]] },
@@ -79,7 +79,7 @@ class Muto {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     this.info.innerHTML = '데이터 다운로드 중...';
-    for (const [name, size] of [['ingredients', 34], ['cuisines', 38]]) {
+    for (const [name, size] of [['ingredients', 34], ['dishes', 38]]) {
       canvas.width = canvas.height = size;
       const image = await getImageFromUrl(name + '.png');
       let y = 0;
@@ -105,7 +105,7 @@ class Muto {
     }
     this.info.innerHTML = '데이터 다운로드 완료';
   }
-  getCuisine(image) {
+  getdish(image) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const width = canvas.width = image.naturalWidth;
@@ -122,22 +122,22 @@ class Muto {
       const need10 = data[s + 4 * (60 - 6 * width)] !== 255;
       info.push(ingredient['array' + (need10 ? 10 : 5)]);
     }
-    const cuisineIdx = info.pop().find(x => info.every(arr => arr.includes(x)));
-    return this.cuisines[cuisineIdx];
+    const dishIdx = info.pop().find(x => info.every(arr => arr.includes(x)));
+    return this.dishes[dishIdx];
   }
-  display(cuisine) {
+  display(dish) {
     for (const foothold of this.footholds) {
       foothold.image.classList.remove('selected');
     }
     this.app.querySelectorAll('#map>.ingredient').forEach(div => div.remove());
     const imageDiv = this.app.querySelector('#answer>.image');
     imageDiv.innerHTML = '';
-    imageDiv.append(cuisine.image);
-    this.app.querySelector('#answer>.description').innerHTML = cuisine.description;
-    this.app.querySelector('#answer>.name').innerHTML = cuisine.name;
+    imageDiv.append(dish.image);
+    this.app.querySelector('#answer>.description').innerHTML = dish.description;
+    this.app.querySelector('#answer>.name').innerHTML = dish.name;
     const ingredientsDiv = this.app.querySelector('#answer>.ingredients');
     ingredientsDiv.innerHTML = '';
-    ingredientsDiv.append(...cuisine.composition.map(arr => {
+    ingredientsDiv.append(...dish.composition.map(arr => {
       const [idx, count] = arr;
       const ingredient = this.ingredients[idx];
       
@@ -161,13 +161,13 @@ class Muto {
       this.info.innerHTML = '클립보드 데이터에 이미지가 없습니다. 스크린샷을 찍어주세요.';
       return;
     }
-    const cuisine = this.getCuisine(image);
-    console.log(cuisine)
-    if (!cuisine) {
+    const dish = this.getdish(image);
+    console.log(dish)
+    if (!dish) {
       this.info.innerHTML = '요리 판독 실패. 스크린샷을 다시 찍어주세요.';
     }
     this.info.innerHTML = '요리 판독 완료.';
-    this.display(cuisine);
+    this.display(dish);
   }
 };
 
