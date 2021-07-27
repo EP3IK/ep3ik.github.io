@@ -36,7 +36,7 @@ body {
   background-color: #225577;
   grid-template: "image description" 16px "image name" 28px "image ingredients" auto / 100px auto;
   padding: 5px;
-  gap: 5px;
+  gap: 8px;
 }
 
 #answer>.image {

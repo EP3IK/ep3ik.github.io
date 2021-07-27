@@ -1,8 +1,4 @@
-﻿const count = 39;
-const ext = document.createElement('canvas').toDataURL('image/webp').startsWith('data:image/webp') ? '.webp' : '.png';
-const info = document.querySelector('#info');
-
-const getImageFromUrl = async src => new Promise(resolve => {
+﻿const getImageFromUrl = async src => new Promise(resolve => {
   const image = new Image();
   image.onload = () => resolve(image);
   image.setAttribute('crossorigin', 'anonymous');
@@ -25,16 +21,7 @@ const getImageFromClipboard = async () => {
 class Muto {
   constructor() {
     this.app = document.querySelector('#app');
-    // this.sets = [
-    //   // 0: 달달발굽5, 1: 매콤발굽5, 2: 느끼껍질5, 3: 새콤껍질5, 4: 담백갈기5, 5: 톡톡갈기5, 6: 폭신발바닥5,
-    //   // 7: 쫀득발바닥5, 8: 단단물갈퀴5, 9: 시큼물갈퀴5, 10:바싹등껍질5, 11: 말랑등껍질5, 12: 미끈깃털5X, 13: 끈적깃털5X, 14: 텁텁발톱5X, 15: 쫄깃발톱5X, 16: 츄릅열매1,
-    //   // 17: ?5, 18: 담백갈기10, 19: 톡톡갈기10, 20: 폭신발바닥10, 21: 쫀득발바닥10, 22: 단단물갈퀴10, 23: 시큼물갈퀴10, 24: 바싹등껍질10, 25: 말랑등껍질10,
-    //   // 26: 미끈깃털10, 27: 끈적깃털10, 28: 텁텁발톱10, 29: 쫄깃발톱10, 30: 츄릅열매10X, 31: ?10, 32: -1
-    //   [0, 2], [8, 10], [1, 3, 6], [9, 11, 14], [2, 4, 7], [10, 12, 15], [3, 6],
-    //   [11, 14], [4, 5], [12, 13], [5, 7], [13, 15], [], [], [], [], [6, 14, 7, 15],
-    //   Array.from({ length: 16 }, (_, i) => i), [0], [8], [1], [9], [2], [10], [3], [11],
-    //   [4, 6], [12, 14], [5, 7], [13, 15], [], Array.from({ length: 16 }, (_, i) => i), []
-    // ];
+    this.info = document.querySelector('#info');
     this.ingredients = [
       { name: '달달 발굽', pixel: '153,170,153', xy: [210, 166], array5: [0, 2], foothold: 1 },
       { name: '매콤 발굽', pixel: '153,170,0', xy: [210, 166], array5: [8, 10], foothold: 1 },
@@ -91,6 +78,7 @@ class Muto {
     // get images
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
+    this.info.innerHTML = '데이터 다운로드 중...';
     for (const [name, size] of [['ingredients', 34], ['cuisines', 38]]) {
       canvas.width = canvas.height = size;
       const image = await getImageFromUrl(name + '.png');
@@ -115,10 +103,9 @@ class Muto {
       foothold.image = image;
       this.app.querySelector('#map').append(div);
     }
+    this.info.innerHTML = '데이터 다운로드 완료';
   }
-  async focusHandler() {
-    const image = await getImageFromClipboard();
-    if (!image) return;
+  getCuisine(image) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const width = canvas.width = image.naturalWidth;
@@ -127,7 +114,6 @@ class Muto {
     const { data } = ctx.getImageData(0, 0, width, canvas.height);
     const uint32 = new Uint32Array(data.buffer);
     const pos = uint32.findIndex((v, i, a) => v === 0xff225544 && a[i + 1] === 0xff000000 && a[i + 2] === 0xff000000);
-    // const sx = idx % width, sy = ~~(idx / width);
     const info = [];
     for (const [dx, dy] of [[116, 167], [116, 205], [276, 167], [276, 205]]) {
       const s = 4 * (pos + dx + dy * width);
@@ -137,25 +123,24 @@ class Muto {
       info.push(ingredient['array' + (need10 ? 10 : 5)]);
     }
     const cuisineIdx = info.pop().find(x => info.every(arr => arr.includes(x)));
-    const cuisine = this.cuisines[cuisineIdx];
-    console.log(cuisine)
-
-
+    return this.cuisines[cuisineIdx];
+  }
+  display(cuisine) {
     for (const foothold of this.footholds) {
       foothold.image.classList.remove('selected');
     }
-    this.app.querySelectorAll('#map > .ingredient').forEach(div => div.remove());
-    const imageDiv = this.app.querySelector('#answer > .image');
+    this.app.querySelectorAll('#map>.ingredient').forEach(div => div.remove());
+    const imageDiv = this.app.querySelector('#answer>.image');
     imageDiv.innerHTML = '';
     imageDiv.append(cuisine.image);
-    this.app.querySelector('#answer > .description').innerHTML = cuisine.description;
-    this.app.querySelector('#answer > .name').innerHTML = cuisine.name;
-    const ingredientsDiv = this.app.querySelector('#answer > .ingredients');
+    this.app.querySelector('#answer>.description').innerHTML = cuisine.description;
+    this.app.querySelector('#answer>.name').innerHTML = cuisine.name;
+    const ingredientsDiv = this.app.querySelector('#answer>.ingredients');
     ingredientsDiv.innerHTML = '';
     ingredientsDiv.append(...cuisine.composition.map(arr => {
       const [idx, count] = arr;
       const ingredient = this.ingredients[idx];
-
+      
       const mapDiv = document.createElement('div');
       mapDiv.classList.add('ingredient');
       mapDiv.append(Object.assign(ingredient.image.cloneNode(true), {
@@ -166,9 +151,23 @@ class Muto {
       const ansDiv = document.createElement('div');
       this.footholds[ingredient.foothold]?.image.classList.add('selected');
       ansDiv.append(ingredient.image);
-      ansDiv.innerHTML += `&nbsp;${ingredient.name} x ${count}`;
+      ansDiv.innerHTML += `&nbsp;${ingredient.name}×${count}`;
       return ansDiv;
     }));
+  }
+  async focusHandler() {
+    const image = await getImageFromClipboard();
+    if (!image) {
+      this.info.innerHTML = '클립보드 데이터에 이미지가 없습니다. 스크린샷을 찍어주세요.';
+      return;
+    }
+    const cuisine = this.getCuisine(image);
+    console.log(cuisine)
+    if (!cuisine) {
+      this.info.innerHTML = '요리 판독 실패. 스크린샷을 다시 찍어주세요.';
+    }
+    this.info.innerHTML = '요리 판독 완료.';
+    this.display(cuisine);
   }
 };
 
