@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>메이플스토리 알파카</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>메이플스토리 알파카</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>단계</th>
+          <th>기댓값</th>
+        </tr>
+      </thead>
+      <tbody id="expectationTable">
+        <!-- <tr>
+          <td>1</td>
+          <td>기댓값 1</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>기댓값 2</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>기댓값 3</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>기댓값 4</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>기댓값 5</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>기댓값 6</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>기댓값 7</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>기댓값 8</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>기댓값 9</td>
+        </tr> -->
+      </tbody>
+    </table>
+
+    <p>⬆️: 대성공 / ➡️: 성공 / ⬅️: 실패</p>
+
+    <div>
+      <label>현재 단계: <span id="currentStep">1</span></label
+      ><br />
+      <label>시도 횟수: <span id="attempts">0</span></label>
+    </div>
+
+    <button id="manualInputBtn">수동 입력</button>
+    <button id="resetBtn">초기화</button>
+
+    <div id="manualInput" style="display: none">
+      <label
+        >단계: <input type="number" id="stepInput" min="1" max="9"
+      /></label>
+      <label
+        >시도 횟수: <input type="number" id="attemptInput" min="0"
+      /></label>
+      <button id="saveBtn">저장</button>
+    </div>
+
+    <script>
+      const GREAT_SUCCESS_TARGET_STEPS = [0, 3, 4, 5, 6, 7, 8, 9, 9, 9];
+      const SUCCESS_TARGET_STEPS = [0, 2, 3, 4, 5, 6, 7, 8, 9, 9];
+      const FAIL_TARGET_STEPS = [0, 1, 2, 2, 3, 4, 5, 6, 7, 9];
+      const REWARDS = [0, 0, 1, 3, 6, 10, 15, 25, 150, 500];
+      const STEP_PROBABILITIES = [
+        [1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0.4, 0.6, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0.5, 0, 0.5, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0.6, 0, 0.4, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0.693, 0, 0.307, 0, 0, 0],
+        [0.03, 0, 0, 0, 0, 0.765, 0, 0.205, 0, 0],
+        [0.04, 0, 0, 0, 0, 0, 0.857, 0, 0.103, 0],
+        [0.05, 0, 0, 0, 0, 0, 0, 0.9, 0, 0.05],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+      ];
+      const MAX_STEP = 9;
+      const INITIAL_STEP = 1;
+      const MAX_ATTEMPT = 100;
+      const INITIAL_ATTEMPT = 0;
+      const STEPS_LENGTH = MAX_STEP + 1;
+
+      function calculateProbabilities(
+        startStep,
+        attempts,
+        _probabilities = STEP_PROBABILITIES
+      ) {
+        // 각 단계에 대한 확률을 초기화
+        let probabilities = Array(STEPS_LENGTH).fill(0);
+        probabilities[startStep] = 1; // 시작 단계의 확률을 1로 설정
+
+        for (let i = 0; i < attempts; i++) {
+          let newProbabilities = Array(STEPS_LENGTH).fill(0);
+
+          for (let currentStep = 0; currentStep < STEPS_LENGTH; currentStep++) {
+            for (let nextStep = 0; nextStep < STEPS_LENGTH; nextStep++) {
+              newProbabilities[nextStep] +=
+                probabilities[currentStep] *
+                _probabilities[currentStep][nextStep];
+            }
+          }
+
+          probabilities = newProbabilities; // 업데이트된 확률로 교체
+        }
+
+        return probabilities; // 각 단계에 도달할 확률 반환
+      }
+
+      let currentStep = INITIAL_STEP;
+      let attempts = INITIAL_ATTEMPT;
+      const history = [];
+
+      function updateDisplay() {
+        document.getElementById("currentStep").innerText = currentStep;
+        document.getElementById("attempts").innerText = attempts;
+
+        // 기댓값 계산
+        const table = document.getElementById("expectationTable");
+        let tableHtml = "";
+        for (let x = currentStep; x <= MAX_STEP; x += 1) {
+          const probabilities = structuredClone(STEP_PROBABILITIES);
+          probabilities[x] = Array(STEPS_LENGTH).fill(0);
+          probabilities[x][x] = 1;
+          const result = calculateProbabilities(
+            currentStep,
+            MAX_ATTEMPT - attempts,
+            probabilities
+          );
+          tableHtml += `<tr>
+            <td>${x}</td>
+            <td>${REWARDS.map((x, i) => x * result[i]).reduce(
+              (a, x) => a + x,
+              0
+            )}</td>
+          </tr>`;
+        }
+        document.getElementById("expectationTable").innerHTML = tableHtml;
+      }
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "ArrowUp") {
+          history.push({ step: currentStep, attempts: attempts });
+
+          if (attempts === MAX_ATTEMPT) {
+            alert("시도 횟수가 최대치에 도달해서 초기화합니다.");
+            // 단계와 시도 횟수 초기화
+            currentStep = INITIAL_STEP;
+            attempts = INITIAL_ATTEMPT;
+            updateDisplay();
+            return;
+          }
+
+          // 대성공 로직
+          currentStep = GREAT_SUCCESS_TARGET_STEPS[currentStep];
+          attempts++;
+        } else if (event.key === "ArrowRight") {
+          history.push({ step: currentStep, attempts: attempts });
+
+          if (attempts === MAX_ATTEMPT) {
+            alert("시도 횟수가 최대치에 도달해서 초기화합니다.");
+            // 단계와 시도 횟수 초기화
+            currentStep = INITIAL_STEP;
+            attempts = INITIAL_ATTEMPT;
+            updateDisplay();
+            return;
+          }
+
+          // 성공 로직
+          currentStep = SUCCESS_TARGET_STEPS[currentStep];
+          attempts++;
+        } else if (event.key === "ArrowLeft") {
+          history.push({ step: currentStep, attempts: attempts });
+
+          if (attempts === MAX_ATTEMPT) {
+            alert("시도 횟수가 최대치에 도달해서 초기화합니다.");
+            // 단계와 시도 횟수 초기화
+            currentStep = INITIAL_STEP;
+            attempts = INITIAL_ATTEMPT;
+            updateDisplay();
+            return;
+          }
+
+          // 실패 로직
+          currentStep = FAIL_TARGET_STEPS[currentStep];
+          attempts++;
+        } else if (event.ctrlKey || event.metaKey) {
+          if (event.key === "z") {
+            // 이전 상태로 돌아가기
+            if (history.length > 0) {
+              const lastState = history.pop();
+              currentStep = lastState.step;
+              attempts = lastState.attempts;
+            }
+          }
+        }
+        updateDisplay();
+      });
+
+      document
+        .getElementById("manualInputBtn")
+        .addEventListener("click", () => {
+          document.getElementById("manualInput").style.display = "block";
+        });
+
+      document.getElementById("saveBtn").addEventListener("click", () => {
+        const stepInput = parseInt(document.getElementById("stepInput").value);
+        const attemptInput = parseInt(
+          document.getElementById("attemptInput").value
+        );
+
+        // 입력값 유효성 검사
+        if (
+          stepInput >= INITIAL_STEP &&
+          stepInput <= MAX_STEP &&
+          attemptInput >= INITIAL_ATTEMPT &&
+          attemptInput <= MAX_ATTEMPT
+        ) {
+          // 이전 상태 저장
+          history.push({ step: currentStep, attempts: attempts });
+
+          // 단계와 시도 횟수 업데이트
+          currentStep = stepInput;
+          attempts = attemptInput;
+          updateDisplay();
+          document.getElementById("manualInput").style.display = "none"; // 입력창 숨기기
+        } else {
+          alert("유효한 값을 입력하세요.");
+        }
+      });
+
+      document.getElementById("resetBtn").addEventListener("click", () => {
+        if (confirm("단계와 시도 횟수를 초기화하시겠습니까?")) {
+          // 이전 상태 저장
+          history.push({ step: currentStep, attempts: attempts });
+
+          // 단계와 시도 횟수 초기화
+          currentStep = INITIAL_STEP;
+          attempts = INITIAL_ATTEMPT;
+          updateDisplay();
+        }
+      });
+
+      // 초기화 시 상태를 저장하는 기능
+      function saveState() {
+        history.push({ step: currentStep, attempts: attempts });
+      }
+
+      // 페이지 로드 시 초기 상태 저장
+      saveState();
+      updateDisplay();
+    </script>
+  </body>
+</html>
