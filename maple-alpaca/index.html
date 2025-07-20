@@ -28,6 +28,11 @@
   <body>
     <h1>메이플스토리 알파카</h1>
 
+    <p>
+      기댓값: 조각 기준으로 n단계에 도달할 때까지 시도하면 얻을 수 있는 조각의
+      기댓값
+    </p>
+
     <table>
       <thead>
         <tr>
@@ -155,8 +160,8 @@
 
         // 기댓값 계산
         const table = document.getElementById("expectationTable");
-        let tableHtml = "";
-        for (let x = currentStep; x <= MAX_STEP; x += 1) {
+        const stepExpectationTuples = [];
+        for (let x = Math.max(currentStep, 2); x <= MAX_STEP; x += 1) {
           const probabilities = structuredClone(STEP_PROBABILITIES);
           probabilities[x] = Array(STEPS_LENGTH).fill(0);
           probabilities[x][x] = 1;
@@ -165,15 +170,32 @@
             MAX_ATTEMPT - attempts,
             probabilities
           );
-          tableHtml += `<tr>
-            <td>${x}</td>
-            <td>${REWARDS.map((x, i) => x * result[i]).reduce(
-              (a, x) => a + x,
-              0
-            )}</td>
-          </tr>`;
+          stepExpectationTuples.push([
+            x,
+            REWARDS.map((x, i) => x * result[i]).reduce((a, x) => a + x, 0),
+          ]);
         }
-        document.getElementById("expectationTable").innerHTML = tableHtml;
+        const currentExpectation = stepExpectationTuples[0][1];
+        const maxExpectationIndex = stepExpectationTuples.reduce(
+          (maxIndexAcc, [step, expectation], index, tuples) =>
+            expectation > tuples[maxIndexAcc][1] ? index : maxIndexAcc,
+          0
+        );
+        console.log(currentExpectation, maxExpectationIndex);
+
+        document.getElementById("expectationTable").innerHTML =
+          stepExpectationTuples
+            .map(([step, expectation], index) => {
+              const [openingTag, closingTag] =
+                index === maxExpectationIndex
+                  ? ["<mark>", "</mark>"]
+                  : expectation < currentExpectation
+                  ? ["<mark style='background-color:salmon;'>", "</mark>"]
+                  : ["", ""];
+
+              return `<tr><td>${step}</td><td>${openingTag}${expectation}${closingTag}</td></tr>`;
+            })
+            .join("");
       }
 
       document.addEventListener("keydown", (event) => {
