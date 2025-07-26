@@ -1,0 +1,17 @@
+{
+  "name": "@octopus/image-process",
+  "version": "0.0.1",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/upng-js": "^2.1.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "es-toolkit": "^1.39.8",
+    "upng-js": "^2.1.0"
+  }
+}

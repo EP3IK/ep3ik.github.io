@@ -1,0 +1,22 @@
+{
+  "name": "@octopus/xml-parse",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/upng-js": "^2.1.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "es-toolkit": "^1.39.8",
+    "fast-xml-parser": "^5.2.5",
+    "upng-js": "^2.1.0"
+  },
+  "scripts": {
+    "save-pngs": "bun src/savePngs.ts",
+    "extract-pixels-json": "bun src/extractPixelsJson.ts"
+  }
+}
