@@ -47,15 +47,17 @@ export const calculateExpectationsByTargetLevel = (
   currentLevel: number,
   tryCount: number
 ): [targetLevel: number, expectation: number][] =>
-  range(Math.max(currentLevel, 2), LEVEL_COUNT).map((targetLevel) => {
-    const probabilities = calculateProbabilities(
-      currentLevel,
-      tryCount,
-      getTargetProbabilitiesMatrix(targetLevel)
-    );
-    const expectation = rewards
-      .map((x, i) => x * probabilities[i])
-      .reduce((a, x) => a + x, 0);
+  range(Math.max(currentLevel, 2), LEVEL_COUNT)
+    .slice(0, MAX_TRY_COUNT - tryCount + 1)
+    .map((targetLevel) => {
+      const probabilities = calculateProbabilities(
+        currentLevel,
+        tryCount,
+        getTargetProbabilitiesMatrix(targetLevel)
+      );
+      const expectation = rewards
+        .map((x, i) => x * probabilities[i])
+        .reduce((a, x) => a + x, 0);
 
-    return [targetLevel, expectation];
-  });
+      return [targetLevel, expectation];
+    });
