@@ -17,13 +17,31 @@ for (const level of Object.keys(levelData) as Level[]) {
   );
 }
 
-const findLevelFromScreenshot = async (
+const findLevelAndTryCountFromScreenshot = (
   screenshotPixels: Pixel[],
   width: number
-): Promise<number | null> => {
+): { level: number | null; tryCount: number | null } => {
+  const counts: TryCount[] = [];
+
   for (const [index] of screenshotPixels.entries()) {
     const x = index % width;
     const y = Math.floor(index / width);
+
+    const isMatchingWithTryCount = (tryCount: TryCount) =>
+      tryCountData[tryCount].every(({ dx, dy, pixel: tryCountPixel }) => {
+        const screenshotPixel = screenshotPixels[(y + dy) * width + (x + dx)];
+
+        return isEqual(tryCountPixel, screenshotPixel);
+      });
+
+    const tryCount = (Object.keys(tryCountData) as TryCount[]).find(
+      isMatchingWithTryCount
+    );
+
+    if (tryCount) {
+      counts.push(tryCount);
+      continue;
+    }
 
     const isRefCoord = commonLevelData.every(
       ({ dx, dy, pixel: commonLevelPixel }) => {
@@ -46,43 +64,16 @@ const findLevelFromScreenshot = async (
     const level = (Object.keys(levelData) as Level[]).find(isMatchingWithLevel);
 
     if (level) {
-      return Number(level);
+      return {
+        level: Number(level),
+        tryCount: counts.length ? Number(counts.join("")) : null,
+      };
     }
 
     break;
   }
 
-  return null;
-};
-
-const findTryCountFromScreenshot = async (
-  screenshotPixels: Pixel[],
-  width: number
-): Promise<number | null> => {
-  const counts: TryCount[] = [];
-
-  for (const [index] of screenshotPixels.entries()) {
-    const x = index % width;
-    const y = Math.floor(index / width);
-
-    const isMatchingWithTryCount = (tryCount: TryCount) =>
-      tryCountData[tryCount].every(({ dx, dy, pixel: tryCountPixel }) => {
-        const screenshotPixel = screenshotPixels[(y + dy) * width + (x + dx)];
-
-        return isEqual(tryCountPixel, screenshotPixel);
-      });
-
-    const tryCount = (Object.keys(tryCountData) as TryCount[]).find(
-      isMatchingWithTryCount
-    );
-
-    if (tryCount) {
-      counts.push(tryCount);
-      continue;
-    }
-  }
-
-  return counts.length ? Number(counts.join("")) : null;
+  return { level: null, tryCount: null };
 };
 
 export const getLevelAndTryCountFromFile = async (file: File) => {
@@ -91,8 +82,5 @@ export const getLevelAndTryCountFromFile = async (file: File) => {
   const rawPixels = [...new Uint8Array(toRGBA8(image)[0]!)];
   const screenshotPixels = chunk(rawPixels, 4) as Pixel[];
 
-  return {
-    level: await findLevelFromScreenshot(screenshotPixels, image.width),
-    tryCount: await findTryCountFromScreenshot(screenshotPixels, image.width),
-  };
+  return findLevelAndTryCountFromScreenshot(screenshotPixels, image.width);
 };
